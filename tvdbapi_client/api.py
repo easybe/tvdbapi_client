@@ -1,6 +1,8 @@
 """Provide API client for TVDB API v2.0 services."""
 import json
 import logging
+import os
+import tempfile
 
 import cachecontrol
 from cachecontrol import caches
@@ -103,9 +105,10 @@ class TVDBClient(object):
     def session(self):
         """Provide access to request session with local cache enabled."""
         if self._session is None:
+            cache_dir = os.path.join(tempfile.gettempdir(), 'tvdb_cache')
             self._session = cachecontrol.CacheControl(
                 requests.Session(),
-                cache=caches.FileCache('.tvdb_cache'))
+                cache=caches.FileCache(cache_dir))
         return self._session
 
     @exceptions.error_map
